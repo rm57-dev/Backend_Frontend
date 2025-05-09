@@ -95,7 +95,7 @@ async function manejarSubmit(e) {
                 });
             }
         }
-        // limpiarFormulario();
+        limpiarFormulario();
         cargarPersonas();
     } catch (error) {
         console.error("Error al guardar persona: ", error);
