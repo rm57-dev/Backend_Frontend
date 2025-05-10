@@ -96,26 +96,24 @@ async function manejarSubmit(e) {
                     body: JSON.stringify({ imagen: imagenBase64 })
                 });
             }
-
             await actualizarPersona(persona);
-            cargarPersonas(); //añadido propio
-            resetearFormulario(); //añadido propio
         } else {
             const response = await crearPersona(persona);
 
-            if (response.id_persona) {
+            if (!response.id) {
                 throw new Error('El servidor no devolvio el ID de la persona creada');
             }
             if (inputImagen.files[0]) {
                 const imagenBase64 = await convertirImagenABase64(inputImagen.files[0]);
-                await fetch(`${API_URL}/imagenes/insertar/personas/id_persona/${response.id_persona}`, { //si algo lo cambias por id_persona
+                await fetch(`${API_URL}/imagenes/insertar/personas/id_persona/${response.id}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ imagen: imagenBase64 })
                 });
-                cargarPersonas(); //añadido propio
             }
         }
+        resetearFormulario();
+        cargarPersonas();
     } catch (error) {
         console.error('Error al guardar persona:', error);
         alert('Error al guardar los datos: ' + error.message);
@@ -133,7 +131,7 @@ async function crearPersona(persona) {
     }
 
     const data = await response.json();
-    if (!data.id_persona) {
+    if (!data.id) {
         throw new Error('La respuesta del servidor no contiene el ID de la persona');
     }
 
@@ -151,7 +149,7 @@ async function actualizarPersona(persona) {
 }
 
 async function eliminarPersona(id) {
-    if (confirm('¿Está seguro de que desea eliminar esta persona?')) {
+    if (!confirm('¿Está seguro de que desea eliminar esta persona?')) return;  //Preguntar
         try {
             await fetch(`${API_URL}/imagenes/eliminar/personas/id_persona/${id}`, { method: 'DELETE' });
             await fetch(`${API_URL}/personas/${id}`, { method: 'DELETE' });
@@ -161,7 +159,6 @@ async function eliminarPersona(id) {
             alert('Error al eliminar la persona: ' + error.message);
         }
     }
-}
 
 async function editarPersona(persona) {
     modoEdicion = true;

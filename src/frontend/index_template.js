@@ -98,8 +98,8 @@ async function manejarSubmit(e) {
                 });
             }
         }
-        limpiarFormulario();
         cargarPersonas();
+        limpiarFormulario();
     } catch (error) {
         console.error('Error al guardar persona: ', error);
         alert('Error al guardar los datos: ' + error.message);
